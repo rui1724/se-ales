@@ -1,395 +1,1546 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SEÑALES — PROTOTIPO</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<title>SEÑALES</title>
 
-    html, body {
-      margin: 0;
-      width: 100%;
-      min-height: 100%;
-      background: #050505;
-      color: #f5f5f5;
-      font-family: Georgia, "Times New Roman", serif;
-    }
+<style>
 
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow-x: hidden;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    .noise {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: .04;
-      background-image:
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    background: #050505;
+    color: #f5f5f5;
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    overflow-x: hidden;
+}
+
+.noise {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: .035;
+
+    background-image:
         repeating-linear-gradient(
-          0deg,
-          rgba(255,255,255,.7) 0 1px,
-          transparent 1px 3px
+            0deg,
+            rgba(255,255,255,.7) 0 1px,
+            transparent 1px 3px
         );
-    }
 
-    .screen {
-      width: min(90%, 650px);
-      text-align: center;
-      padding: 40px 20px;
-      animation: appear .8s ease;
-    }
+    z-index: 999;
+}
 
-    .hidden {
-      display: none;
-    }
+.screen {
+    width: min(92%, 720px);
+    min-height: 100vh;
 
-    .tiny {
-      font-family: Arial, sans-serif;
-      font-size: 10px;
-      letter-spacing: 5px;
-      opacity: .45;
-      margin-bottom: 28px;
-    }
+    padding: 70px 20px;
 
-    h1 {
-      margin: 0;
-      font-size: clamp(55px, 15vw, 120px);
-      font-weight: 400;
-      letter-spacing: .15em;
-    }
+    text-align: center;
 
-    h2 {
-      font-size: 28px;
-      font-weight: 400;
-      letter-spacing: 4px;
-      margin-bottom: 35px;
-    }
+    animation: appear .7s ease;
+}
 
-    .line {
-      width: 80px;
-      height: 1px;
-      background: rgba(255,255,255,.5);
-      margin: 28px auto;
-    }
+.hidden {
+    display: none !important;
+}
 
-    .question {
-      font-family: Arial, sans-serif;
-      font-size: 12px;
-      letter-spacing: 2px;
-      opacity: .65;
-      margin-bottom: 25px;
-    }
+.tiny {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    letter-spacing: 5px;
+    opacity: .45;
+    margin-bottom: 30px;
+}
 
-    button {
-      border: 1px solid rgba(255,255,255,.45);
-      background: transparent;
-      color: white;
-      padding: 13px 30px;
-      font-size: 11px;
-      letter-spacing: 3px;
-      cursor: pointer;
-      transition: .3s ease;
-      margin-top: 20px;
-    }
+h1 {
+    margin: 0;
 
-    button:hover {
-      background: white;
-      color: black;
-    }
+    font-size: clamp(55px, 15vw, 120px);
+    font-weight: 400;
 
-    .numbers {
-      font-family: Arial, sans-serif;
-      font-size: clamp(22px, 6vw, 36px);
-      letter-spacing: 10px;
-      margin: 40px 0;
-    }
+    letter-spacing: .15em;
+}
 
-    .instruction {
-      font-family: Arial, sans-serif;
-      font-size: 12px;
-      letter-spacing: 1px;
-      opacity: .65;
-      line-height: 1.8;
-    }
+h2 {
+    font-size: clamp(25px, 6vw, 38px);
+    font-weight: 400;
+    letter-spacing: 5px;
 
-    input {
-      width: 180px;
-      padding: 13px;
-      margin-top: 25px;
-      background: transparent;
-      border: 1px solid rgba(255,255,255,.4);
-      color: white;
-      text-align: center;
-      font-size: 18px;
-      outline: none;
-    }
+    margin: 0 0 30px;
+}
 
-    input:focus {
-      border-color: white;
-    }
+h3 {
+    font-weight: 400;
+    letter-spacing: 2px;
+}
 
-    .result {
-      margin-top: 30px;
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-      line-height: 1.8;
-      min-height: 50px;
-    }
+.line {
+    width: 80px;
+    height: 1px;
 
-    .success {
-      animation: appear .8s ease;
-    }
+    background: rgba(255,255,255,.45);
 
-    .hint {
-      opacity: .45;
-      font-size: 11px;
-      margin-top: 15px;
-    }
+    margin: 30px auto;
+}
 
-    @keyframes appear {
-      from {
+.text {
+    font-family: Arial, sans-serif;
+
+    font-size: 13px;
+    line-height: 2;
+
+    opacity: .75;
+}
+
+.small {
+    font-family: Arial, sans-serif;
+
+    font-size: 11px;
+    line-height: 1.8;
+
+    opacity: .45;
+}
+
+button {
+    border: 1px solid rgba(255,255,255,.45);
+
+    background: transparent;
+
+    color: white;
+
+    padding: 14px 30px;
+
+    font-size: 10px;
+    letter-spacing: 3px;
+
+    cursor: pointer;
+
+    transition: .3s ease;
+
+    margin-top: 25px;
+}
+
+button:hover {
+    background: white;
+    color: black;
+}
+
+input {
+    width: 220px;
+
+    padding: 14px;
+
+    margin-top: 25px;
+
+    background: transparent;
+
+    border: 1px solid rgba(255,255,255,.4);
+
+    color: white;
+
+    text-align: center;
+
+    font-size: 18px;
+
+    outline: none;
+}
+
+input:focus {
+    border-color: white;
+}
+
+.resultado {
+    min-height: 60px;
+
+    margin-top: 30px;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+}
+
+.casos {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 12px;
+
+    margin: 35px 0;
+}
+
+.caso {
+    border: 1px solid rgba(255,255,255,.15);
+
+    padding: 25px 15px;
+
+    cursor: pointer;
+
+    transition: .3s ease;
+}
+
+.caso:hover {
+    border-color: rgba(255,255,255,.7);
+}
+
+.caso-numero {
+    font-family: Arial, sans-serif;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+    opacity: .4;
+
+    margin-bottom: 12px;
+}
+
+.caso-titulo {
+    font-size: 14px;
+
+    letter-spacing: 2px;
+}
+
+.caso-texto {
+    display: none;
+
+    margin-top: 18px;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 11px;
+
+    line-height: 1.8;
+
+    opacity: .65;
+}
+
+.caso.abierto .caso-texto {
+    display: block;
+}
+
+.señal {
+    border: 1px solid rgba(255,255,255,.15);
+
+    padding: 22px;
+
+    margin: 15px 0;
+
+    text-align: left;
+}
+
+.señal strong {
+    font-family: Arial, sans-serif;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+    opacity: .5;
+}
+
+.señal p {
+    font-size: 14px;
+
+    line-height: 1.7;
+
+    margin-bottom: 0;
+}
+
+.recuerdos {
+    text-align: left;
+
+    margin-top: 35px;
+}
+
+.recuerdo {
+    border-left: 1px solid rgba(255,255,255,.3);
+
+    padding: 5px 0 5px 20px;
+
+    margin: 25px 0;
+}
+
+.recuerdo-titulo {
+    font-size: 15px;
+
+    letter-spacing: 2px;
+}
+
+.recuerdo-texto {
+    font-family: Arial, sans-serif;
+
+    font-size: 11px;
+
+    line-height: 1.8;
+
+    opacity: .6;
+
+    margin-top: 8px;
+}
+
+.choice {
+    border: 1px solid rgba(255,255,255,.2);
+
+    padding: 18px;
+
+    margin: 12px 0;
+
+    cursor: pointer;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 12px;
+
+    transition: .3s;
+}
+
+.choice:hover {
+    border-color: white;
+}
+
+.choice.selected {
+    background: white;
+
+    color: black;
+}
+
+.final-word {
+    font-size: clamp(50px, 13vw, 100px);
+
+    letter-spacing: .12em;
+
+    margin: 40px 0;
+}
+
+.hidden-clue {
+    opacity: .02;
+
+    cursor: pointer;
+
+    user-select: none;
+}
+
+.hidden-clue:hover {
+    opacity: .3;
+}
+
+@keyframes appear {
+
+    from {
         opacity: 0;
-        transform: translateY(15px);
-      }
+        transform: translateY(18px);
+    }
 
-      to {
+    to {
         opacity: 1;
         transform: translateY(0);
-      }
     }
-  </style>
+
+}
+
+@media(max-width:500px) {
+
+    .casos {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
 </head>
+
 
 <body>
 
-  <div class="noise"></div>
+<div class="noise"></div>
 
 
-  <!-- ========================= -->
-  <!-- PORTADA -->
-  <!-- ========================= -->
+<!-- ================================================= -->
+<!-- PÁGINA 1 -->
+<!-- ================================================= -->
 
-  <section id="inicio" class="screen">
+<section id="pagina1" class="screen">
 
     <div class="tiny">
-      ARCHIVO 001
+        ARCHIVO 001
     </div>
 
     <h1>
-      SEÑALES
+        SEÑALES
     </h1>
 
     <div class="line"></div>
 
-    <div class="question">
-      ¿REALMENTE CREES EN LAS COINCIDENCIAS?
+    <div class="text">
+        Una experiencia para descubrir
+        <br>
+        lo que no se encuentra a simple vista.
     </div>
 
-    <button onclick="mostrarPuzzle()">
-      ENTRAR
+    <button onclick="irA('pagina2')">
+        COMENZAR
     </button>
 
-  </section>
+</section>
 
 
-  <!-- ========================= -->
-  <!-- PUZZLE 1 -->
-  <!-- ========================= -->
 
-  <section id="puzzle1" class="screen hidden">
+<!-- ================================================= -->
+<!-- PÁGINA 2 -->
+<!-- ================================================= -->
+
+<section id="pagina2" class="screen hidden">
 
     <div class="tiny">
-      ARCHIVO 002
+        ARCHIVO 002
     </div>
 
     <h2>
-      PUZZLE 01
+        OBSERVA
     </h2>
 
     <div class="line"></div>
 
-    <div class="instruction">
-      Hay algo que no estás viendo.
-      <br>
-      No busques una respuesta.
-      <br>
-      Busca un patrón.
+    <div class="text">
+
+        Antes de buscar respuestas,
+        <br>
+        observa los casos.
+
+        <br><br>
+
+        Seis situaciones.
+        <br>
+        Seis historias.
+        <br>
+        Algo las conecta.
+
     </div>
 
-    <div class="numbers">
-      2 · 4 · 8 · 16 · ?
+
+    <div class="casos">
+
+
+        <div class="caso" onclick="abrirCaso(this)">
+
+            <div class="caso-numero">
+                CASO 01
+            </div>
+
+            <div class="caso-titulo">
+                QUEDARSE
+            </div>
+
+            <div class="caso-texto">
+
+                Las cosas se complicaron.
+                <br>
+                Hubo problemas.
+                <br>
+                Aun así, decidieron continuar.
+
+            </div>
+
+        </div>
+
+
+        <div class="caso" onclick="abrirCaso(this)">
+
+            <div class="caso-numero">
+                CASO 02
+            </div>
+
+            <div class="caso-titulo">
+                HABLAR
+            </div>
+
+            <div class="caso-texto">
+
+                No estaban de acuerdo.
+                <br>
+                Pero decidieron hablar
+                en lugar de desaparecer.
+
+            </div>
+
+        </div>
+
+
+        <div class="caso" onclick="abrirCaso(this)">
+
+            <div class="caso-numero">
+                CASO 03
+            </div>
+
+            <div class="caso-titulo">
+                PERDONAR
+            </div>
+
+            <div class="caso-texto">
+
+                Hubo errores.
+                <br>
+                Perdonar no significó
+                olvidar lo ocurrido.
+
+            </div>
+
+        </div>
+
+
+        <div class="caso" onclick="abrirCaso(this)">
+
+            <div class="caso-numero">
+                CASO 04
+            </div>
+
+            <div class="caso-titulo">
+                CAMBIAR
+            </div>
+
+            <div class="caso-texto">
+
+                Decir que algo cambiará
+                es sencillo.
+                <br>
+                Demostrarlo es diferente.
+
+            </div>
+
+        </div>
+
+
+        <div class="caso" onclick="abrirCaso(this)">
+
+            <div class="caso-numero">
+                CASO 05
+            </div>
+
+            <div class="caso-titulo">
+                ELEGIR
+            </div>
+
+            <div class="caso-texto">
+
+                A veces querer a alguien
+                no resuelve los problemas.
+                <br>
+                También hay que decidir.
+
+            </div>
+
+        </div>
+
+
+        <div class="caso" onclick="abrirCaso(this)">
+
+            <div class="caso-numero">
+                CASO 06
+            </div>
+
+            <div class="caso-titulo">
+                SEGUNDA VEZ
+            </div>
+
+            <div class="caso-texto">
+
+                Algunas historias
+                no terminan cuando parecen terminar.
+
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="instruction">
-      ¿Qué número sigue?
+
+    <div class="small">
+        Abre todos los casos.
     </div>
+
+
+    <button id="botonPuzzle1"
+            class="hidden"
+            onclick="irA('puzzle1')">
+
+        CONTINUAR
+
+    </button>
+
+</section>
+
+
+
+<!-- ================================================= -->
+<!-- PUZZLE 1 -->
+<!-- ================================================= -->
+
+<section id="puzzle1" class="screen hidden">
+
+    <div class="tiny">
+        ARCHIVO 003
+    </div>
+
+    <h2>
+        ENCONTRAR EL PATRÓN
+    </h2>
+
+    <div class="line"></div>
+
+    <div class="text">
+
+        Ya viste los seis casos.
+
+        <br><br>
+
+        Ahora no busques lo que ocurrió.
+
+        <br>
+
+        Busca lo que hicieron después.
+
+        <br><br>
+
+        ¿Qué tienen en común?
+
+    </div>
+
 
     <input
-      id="respuesta"
-      type="number"
-      placeholder="?"
+        id="respuesta1"
+        type="text"
+        placeholder="respuesta"
+        autocomplete="off"
     >
+
 
     <br>
 
-    <button onclick="comprobar()">
-      COMPROBAR
+
+    <button onclick="comprobarPuzzle1()">
+        COMPROBAR
     </button>
 
-    <div id="resultado" class="result"></div>
 
-  </section>
+    <div id="resultado1" class="resultado"></div>
+
+</section>
 
 
-  <!-- ========================= -->
-  <!-- RESULTADO -->
-  <!-- ========================= -->
 
-  <section id="final1" class="screen hidden">
+<!-- ================================================= -->
+<!-- INSTAGRAM -->
+<!-- ================================================= -->
+
+<section id="instagram" class="screen hidden">
 
     <div class="tiny">
-      ARCHIVO 003
+        ARCHIVO 004
     </div>
 
     <h2>
-      SEÑAL ENCONTRADA
+        EVIDENCIA
     </h2>
 
     <div class="line"></div>
 
-    <div class="instruction">
-      Bien.
-      <br><br>
-      Acabas de encontrar la primera señal.
-      <br><br>
-      Pero una señal no sirve de nada
-      <br>
-      si nadie sabe dónde mirar.
+
+    <div class="text">
+
+        Encontraste el patrón.
+
+        <br><br>
+
+        Pero encontrar un patrón
+        <br>
+        no significa que sea real.
+
+        <br><br>
+
+        Ahora busca evidencia.
+
     </div>
 
-    <button onclick="siguiente()">
-      CONTINUAR
+
+    <div class="señal">
+
+        <strong>
+            SEÑAL 01
+        </strong>
+
+        <p>
+            A veces el problema no es dejar de querer.
+        </p>
+
+    </div>
+
+
+    <div class="señal">
+
+        <strong>
+            SEÑAL 02
+        </strong>
+
+        <p>
+            Hablar también puede ser una forma de quedarse.
+        </p>
+
+    </div>
+
+
+    <div class="señal">
+
+        <strong>
+            SEÑAL 03
+        </strong>
+
+        <p>
+            Perdonar no borra lo que ocurrió.
+        </p>
+
+    </div>
+
+
+    <div class="señal">
+
+        <strong>
+            SEÑAL 04
+        </strong>
+
+        <p>
+            Las promesas solamente importan cuando cambian acciones.
+        </p>
+
+    </div>
+
+
+    <div class="señal">
+
+        <strong>
+            SEÑAL 05
+        </strong>
+
+        <p>
+            Una segunda oportunidad también es una decisión.
+        </p>
+
+    </div>
+
+
+    <div class="señal">
+
+        <strong>
+            SEÑAL 06
+        </strong>
+
+        <p>
+            Querer a alguien no siempre significa saber cómo hacerlo.
+        </p>
+
+    </div>
+
+
+    <!-- AQUÍ DESPUÉS PONEMOS EL LINK REAL -->
+
+    <button onclick="irA('pagina3')">
+
+        YA ENCONTRÉ LA EVIDENCIA
+
     </button>
 
-  </section>
+</section>
 
 
-  <!-- ========================= -->
-  <!-- PRÓXIMA PÁGINA -->
-  <!-- ========================= -->
 
-  <section id="final2" class="screen hidden">
+<!-- ================================================= -->
+<!-- PÁGINA 3 -->
+<!-- ================================================= -->
+
+<section id="pagina3" class="screen hidden">
 
     <div class="tiny">
-      ARCHIVO 004
+        ARCHIVO 005
     </div>
 
     <h2>
-      ¿DÓNDE MIRAR?
+        CONECTAR
     </h2>
 
     <div class="line"></div>
 
-    <div class="instruction">
-      Esta parte todavía está en construcción.
-      <br><br>
-      Pero acabas de desbloquear
-      <br>
-      algo que antes no existía.
+
+    <div class="text">
+
+        Hasta ahora has observado historias.
+
+        <br><br>
+
+        Has encontrado patrones.
+
+        <br><br>
+
+        Has encontrado evidencia.
+
+        <br><br>
+
+        Ahora falta una cosa:
+
+        <br><br>
+
+        <strong>
+            conectarlo con la realidad.
+        </strong>
+
     </div>
 
-    <div class="hint">
-      PROTOTIPO 0.1
+
+    <div class="recuerdos">
+
+        <div class="recuerdo">
+
+            <div class="recuerdo-titulo">
+                PROBLEMAS
+            </div>
+
+            <div class="recuerdo-texto">
+
+                Toda relación tiene momentos
+                en los que las cosas dejan de funcionar
+                como deberían.
+
+            </div>
+
+        </div>
+
+
+        <div class="recuerdo">
+
+            <div class="recuerdo-titulo">
+                COMUNICACIÓN
+            </div>
+
+            <div class="recuerdo-texto">
+
+                Lo que no se dice también termina
+                convirtiéndose en un problema.
+
+            </div>
+
+        </div>
+
+
+        <div class="recuerdo">
+
+            <div class="recuerdo-titulo">
+                DECISIONES
+            </div>
+
+            <div class="recuerdo-texto">
+
+                Una relación no continúa solamente
+                porque dos personas se quieran.
+
+            </div>
+
+        </div>
+
     </div>
 
-  </section>
+
+    <button onclick="irA('puzzle2')">
+
+        CONTINUAR
+
+    </button>
+
+</section>
 
 
-  <script>
 
-    function ocultarTodo() {
-      document.getElementById("inicio").classList.add("hidden");
-      document.getElementById("puzzle1").classList.add("hidden");
-      document.getElementById("final1").classList.add("hidden");
-      document.getElementById("final2").classList.add("hidden");
+<!-- ================================================= -->
+<!-- PUZZLE 2 -->
+<!-- ================================================= -->
+
+<section id="puzzle2" class="screen hidden">
+
+    <div class="tiny">
+        ARCHIVO 006
+    </div>
+
+    <h2>
+        INTERPRETAR
+    </h2>
+
+    <div class="line"></div>
+
+
+    <div class="text">
+
+        Encontrar patrones fue el primer paso.
+
+        <br><br>
+
+        Ahora interpreta lo que viste.
+
+        <br><br>
+
+        ¿Cuál de estas opciones representa
+        mejor lo que tienen en común
+        todas las señales?
+
+    </div>
+
+
+    <div class="choice"
+         onclick="seleccionar(this, false)">
+
+        A — Nada puede cambiar lo ocurrido.
+
+    </div>
+
+
+    <div class="choice"
+         onclick="seleccionar(this, false)">
+
+        B — Si existe amor, todo se arregla solo.
+
+    </div>
+
+
+    <div class="choice"
+         onclick="seleccionar(this, true)">
+
+        C — Lo que ocurra después depende
+        de las decisiones que se tomen.
+
+    </div>
+
+
+    <div class="choice"
+         onclick="seleccionar(this, false)">
+
+        D — Las segundas oportunidades
+        siempre funcionan.
+
+    </div>
+
+
+    <div id="resultado2"
+         class="resultado">
+
+    </div>
+
+</section>
+
+
+
+<!-- ================================================= -->
+<!-- PÁGINA 4 -->
+<!-- ================================================= -->
+
+<section id="pagina4" class="screen hidden">
+
+    <div class="tiny">
+        ARCHIVO 007
+    </div>
+
+    <h2>
+        RECUERDOS
+    </h2>
+
+    <div class="line"></div>
+
+
+    <div class="text">
+
+        Hay cosas que solamente
+        pueden entenderse cuando
+        se miran hacia atrás.
+
+        <br><br>
+
+        Recuerdos.
+        <br>
+        Errores.
+        <br>
+        Decisiones.
+
+    </div>
+
+
+    <div class="recuerdos">
+
+
+        <div class="recuerdo">
+
+            <div class="recuerdo-titulo">
+                LO QUE OCURRIÓ
+            </div>
+
+            <div class="recuerdo-texto">
+
+                No puedes cambiar una decisión
+                después de haberla tomado.
+
+            </div>
+
+        </div>
+
+
+        <div class="recuerdo">
+
+            <div class="recuerdo-titulo">
+                LO QUE APRENDISTE
+            </div>
+
+            <div class="recuerdo-texto">
+
+                Entender un error no significa
+                justificarlo.
+
+            </div>
+
+        </div>
+
+
+        <div class="recuerdo">
+
+            <div class="recuerdo-titulo">
+                LO QUE HACES DESPUÉS
+            </div>
+
+            <div class="recuerdo-texto">
+
+                Aquí es donde una señal
+                puede convertirse en una decisión.
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <button onclick="irA('puzzle3')">
+
+        SIGUIENTE
+
+    </button>
+
+</section>
+
+
+
+<!-- ================================================= -->
+<!-- PUZZLE 3 -->
+<!-- ================================================= -->
+
+<section id="puzzle3" class="screen hidden">
+
+    <div class="tiny">
+        ARCHIVO 008
+    </div>
+
+    <h2>
+        CONECTAR TODO
+    </h2>
+
+    <div class="line"></div>
+
+
+    <div class="text">
+
+        Ya tienes las piezas.
+
+        <br><br>
+
+        Patrones.
+        <br>
+        Evidencia.
+        <br>
+        Situaciones.
+        <br>
+        Recuerdos.
+        <br>
+        Errores.
+        <br>
+        Decisiones.
+
+        <br><br>
+
+        Ahora únelas.
+
+        <br><br>
+
+        Hay una palabra que explica
+        todo el recorrido.
+
+    </div>
+
+
+    <input
+        id="respuesta3"
+        type="text"
+        placeholder="palabra"
+        autocomplete="off"
+    >
+
+
+    <br>
+
+
+    <button onclick="comprobarPuzzle3()">
+
+        DESCUBRIR
+
+    </button>
+
+
+    <div id="resultado3"
+         class="resultado">
+
+    </div>
+
+
+    <!-- PISTA OCULTA -->
+
+    <div
+        class="hidden-clue"
+        onclick="mostrarPista()">
+
+        observar
+
+    </div>
+
+
+    <div
+        id="pista3"
+        class="small hidden">
+
+        La respuesta estuvo frente a ti
+        desde el principio.
+
+    </div>
+
+</section>
+
+
+
+<!-- ================================================= -->
+<!-- FINAL -->
+<!-- ================================================= -->
+
+<section id="final" class="screen hidden">
+
+    <div class="tiny">
+        ARCHIVO 009
+    </div>
+
+
+    <div class="line"></div>
+
+
+    <div class="text">
+
+        Al principio preguntamos:
+
+        <br><br>
+
+        ¿Realmente crees
+        en las coincidencias?
+
+    </div>
+
+
+    <div class="final-word">
+
+        SEÑALES
+
+    </div>
+
+
+    <div class="line"></div>
+
+
+    <div class="text">
+
+        Tal vez una señal no sea
+        algo que te diga qué hacer.
+
+        <br><br>
+
+        Tal vez solamente sea algo
+        que te obliga a mirar.
+
+        <br><br>
+
+        A recordar.
+
+        <br><br>
+
+        A entender.
+
+        <br><br>
+
+        Y finalmente...
+
+        <br><br>
+
+        <strong>
+            A DECIDIR.
+        </strong>
+
+    </div>
+
+
+    <div style="margin-top:70px;">
+
+        <div class="small">
+
+            ARCHIVO COMPLETADO
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<script>
+
+
+/* ================================================= */
+/* NAVEGACIÓN */
+/* ================================================= */
+
+function ocultarTodo() {
+
+    const pantallas = document.querySelectorAll(".screen");
+
+    pantallas.forEach(function(pantalla) {
+
+        pantalla.classList.add("hidden");
+
+    });
+
+}
+
+
+function irA(id) {
+
+    ocultarTodo();
+
+    document.getElementById(id)
+        .classList.remove("hidden");
+
+    window.scrollTo(0, 0);
+
+}
+
+
+
+/* ================================================= */
+/* CASOS */
+/* ================================================= */
+
+let casosAbiertos = 0;
+
+
+function abrirCaso(elemento) {
+
+    if (!elemento.classList.contains("abierto")) {
+
+        elemento.classList.add("abierto");
+
+        casosAbiertos++;
+
     }
 
 
-    function mostrarPuzzle() {
+    if (casosAbiertos >= 6) {
 
-      ocultarTodo();
-
-      document.getElementById("puzzle1").classList.remove("hidden");
+        document
+            .getElementById("botonPuzzle1")
+            .classList.remove("hidden");
 
     }
 
-
-    function comprobar() {
-
-      const respuesta =
-        document.getElementById("respuesta").value;
-
-      const resultado =
-        document.getElementById("resultado");
+}
 
 
-      if (respuesta === "32") {
+
+/* ================================================= */
+/* PUZZLE 1 */
+/* ================================================= */
+
+function comprobarPuzzle1() {
+
+    const respuesta =
+        document
+        .getElementById("respuesta1")
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    const resultado =
+        document.getElementById("resultado1");
+
+
+    /*
+       RESPUESTAS ACEPTADAS
+
+       "decidir"
+       "decisión"
+       "decision"
+
+       Después podremos cambiar esto por
+       la respuesta definitiva.
+    */
+
+
+    if (
+        respuesta === "decidir" ||
+        respuesta === "decision" ||
+        respuesta === "decisión"
+    ) {
 
         resultado.innerHTML = `
-          <div class="success">
-            <strong>SEÑAL ENCONTRADA.</strong>
+
+            <strong>
+                PATRÓN ENCONTRADO.
+            </strong>
+
             <br><br>
-            Correcto.
+
+            No se trataba solamente
+            de lo que ocurrió.
+
             <br>
-            Pero esto apenas empieza...
-            <br>
-            <button onclick="mostrarFinal1()">
-              CONTINUAR
+
+            Se trataba de lo que hicieron después.
+
+            <br><br>
+
+            <button onclick="irA('instagram')">
+                BUSCAR EVIDENCIA
             </button>
-          </div>
+
         `;
 
-      } else {
+    }
+
+    else {
 
         resultado.innerHTML = `
-          <div>
-            No.
+
+            No exactamente.
+
             <br><br>
-            Hay algo que estás pasando por alto.
-          </div>
+
+            No busques lo que ocurrió.
+
+            <br>
+
+            Mira lo que hicieron
+            <strong>después</strong>.
+
         `;
 
-      }
+    }
+
+}
+
+
+
+/* ================================================= */
+/* PUZZLE 2 */
+/* ================================================= */
+
+function seleccionar(elemento, correcto) {
+
+    const opciones =
+        document.querySelectorAll(".choice");
+
+
+    opciones.forEach(function(opcion) {
+
+        opcion.classList.remove("selected");
+
+    });
+
+
+    elemento.classList.add("selected");
+
+
+    const resultado =
+        document.getElementById("resultado2");
+
+
+    if (correcto) {
+
+        resultado.innerHTML = `
+
+            <strong>
+                INTERPRETACIÓN CORRECTA.
+            </strong>
+
+            <br><br>
+
+            Una señal no decide por ti.
+
+            <br>
+
+            Solamente te muestra algo.
+
+            <br><br>
+
+            Lo que hagas con ella
+            sigue siendo tu decisión.
+
+            <br><br>
+
+            <button onclick="irA('pagina4')">
+                CONTINUAR
+            </button>
+
+        `;
 
     }
 
+    else {
 
-    function mostrarFinal1() {
+        resultado.innerHTML = `
 
-      ocultarTodo();
+            No.
 
-      document.getElementById("final1").classList.remove("hidden");
+            <br><br>
 
-    }
+            Vuelve a mirar
+            todo lo que encontraste.
 
-
-    function siguiente() {
-
-      ocultarTodo();
-
-      document.getElementById("final2").classList.remove("hidden");
+        `;
 
     }
 
-  </script>
+}
+
+
+
+/* ================================================= */
+/* PUZZLE 3 */
+/* ================================================= */
+
+function comprobarPuzzle3() {
+
+    const respuesta =
+        document
+        .getElementById("respuesta3")
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    const resultado =
+        document.getElementById("resultado3");
+
+
+    if (
+        respuesta === "señales" ||
+        respuesta === "senales"
+    ) {
+
+        resultado.innerHTML = `
+
+            <strong>
+                CONEXIÓN COMPLETADA.
+            </strong>
+
+            <br><br>
+
+            Todas las piezas
+            estuvieron frente a ti.
+
+            <br><br>
+
+            Ahora puedes ver
+            lo que significaban.
+
+            <br><br>
+
+            <button onclick="irA('final')">
+                VER EL FINAL
+            </button>
+
+        `;
+
+    }
+
+    else {
+
+        resultado.innerHTML = `
+
+            Todavía falta conectar algo.
+
+            <br><br>
+
+            Recuerda:
+
+            <br>
+
+            patrones.
+            <br>
+            evidencia.
+            <br>
+            recuerdos.
+            <br>
+            decisiones.
+
+        `;
+
+    }
+
+}
+
+
+
+/* ================================================= */
+/* PISTA OCULTA */
+/* ================================================= */
+
+function mostrarPista() {
+
+    document
+        .getElementById("pista3")
+        .classList
+        .remove("hidden");
+
+}
+
+
+</script>
+
 
 </body>
 </html>
