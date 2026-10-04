@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEÑALES</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #050505;
+      color: #f3f3f3;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .045;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(255,255,255,.7) 0 1px, transparent 1px 3px);
+      mix-blend-mode: screen;
+    }
+
+    .container {
+      width: min(90vw, 700px);
+      text-align: center;
+      animation: appear 2s ease forwards;
+    }
+
+    .tiny {
+      font-family: Arial, sans-serif;
+      font-size: 10px;
+      letter-spacing: 5px;
+      opacity: .45;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(56px, 15vw, 130px);
+      letter-spacing: .18em;
+      font-weight: 400;
+      margin-right: -.18em;
+      text-shadow: 0 0 25px rgba(255,255,255,.08);
+    }
+
+    .line {
+      width: 80px;
+      height: 1px;
+      background: rgba(255,255,255,.5);
+      margin: 28px auto;
+    }
+
+    .question {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      letter-spacing: 2px;
+      opacity: .65;
+      margin-bottom: 24px;
+    }
+
+    button {
+      border: 1px solid rgba(255,255,255,.45);
+      background: transparent;
+      color: white;
+      padding: 13px 30px;
+      font-size: 11px;
+      letter-spacing: 3px;
+      cursor: pointer;
+      transition: .3s ease;
+    }
+
+    button:hover {
+      background: white;
+      color: black;
+    }
+
+    #message {
+      display: none;
+      margin-top: 35px;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.8;
+      opacity: .8;
+    }
+
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="noise"></div>
+
+  <main class="container">
+    <div class="tiny">ARCHIVO 001</div>
+
+    <h1>SEÑALES</h1>
+
+    <div class="line"></div>
+
+    <div class="question">¿REALMENTE CREES EN LAS COINCIDENCIAS?</div>
+
+    <button onclick="entrar()">ENTRAR</button>
+
+    <div id="message">
+      Entonces sigue.<br>
+      Hay cosas que solo tienen sentido<br>
+      cuando empiezas a conectarlas.
+    </div>
+  </main>
+
+  <script>
+    function entrar() {
+      document.getElementById("message").style.display = "block";
+      document.querySelector("button").style.display = "none";
+    }
+  </script>
+</body>
+</html>
